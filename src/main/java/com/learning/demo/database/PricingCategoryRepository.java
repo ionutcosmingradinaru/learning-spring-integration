@@ -9,8 +9,8 @@ import java.util.Optional;
 
 public interface PricingCategoryRepository extends JpaRepository<PricingCategory, String> {
 
-    Optional<PricingCategory> findByCode(String code);
+  Optional<PricingCategory> findByCode(String code);
 
-    @Query("from PricingCategory pc where pc.startDate <= :date and pc.endDate > :date")
-    Optional<PricingCategory> findByDate(@Param("date") LocalDate date);
+  @Query("from PricingCategory pc where pc.startDate <= :date and pc.endDate > :date")
+  Optional<PricingCategory> findByDate(@Param("date") LocalDate date);
 }

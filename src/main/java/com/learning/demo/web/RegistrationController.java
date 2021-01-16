@@ -1,9 +1,12 @@
 package com.learning.demo.web;
 
 import com.learning.demo.model.AttendeeRegistration;
-import com.learning.demo.service.RegistrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,28 +19,29 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/")
 public class RegistrationController {
-    private static final Logger LOG = LoggerFactory.getLogger(RegistrationController.class);
+  private static final Logger LOG = LoggerFactory.getLogger(RegistrationController.class);
 
-    private final RegistrationService registrationService;
+  private final MessageChannel registrationRequestChannel;
 
-    public RegistrationController(RegistrationService registrationService) {
-        this.registrationService = registrationService;
+  public RegistrationController(@Qualifier("registrationRequest") MessageChannel registrationRequestChannel) {
+    this.registrationRequestChannel = registrationRequestChannel;
+  }
+
+  @GetMapping
+  public String index(@ModelAttribute("registration") AttendeeRegistration registration) {
+    return "index";
+  }
+
+  @PostMapping
+  public String submit(@ModelAttribute("registration") @Valid AttendeeRegistration registration, BindingResult bindingResult) {
+    if (bindingResult.hasErrors()) {
+      LOG.warn("Validation failed: {}", bindingResult);
+      return "index";
     }
 
-    @GetMapping
-    public String index(@ModelAttribute("registration") AttendeeRegistration registration) {
-        return "index";
-    }
+    Message<AttendeeRegistration> message = MessageBuilder.withPayload(registration).build();
+    registrationRequestChannel.send(message);
 
-    @PostMapping
-    public String submit(@ModelAttribute("registration") @Valid AttendeeRegistration registration, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            LOG.warn("Validation failed: {}", bindingResult);
-            return "index";
-        }
-
-        registrationService.register(registration);
-
-        return "success";
-    }
+    return "success";
+  }
 }

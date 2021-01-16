@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface TicketTypeRepository extends JpaRepository<TicketType, String> {
 
-    Optional<TicketType> findByCode(String code);
+  Optional<TicketType> findByCode(String code);
 }

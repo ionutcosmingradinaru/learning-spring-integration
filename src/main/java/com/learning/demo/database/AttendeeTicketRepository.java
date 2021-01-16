@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface AttendeeTicketRepository extends JpaRepository<AttendeeTicket, Integer> {
 
-    @Query("from AttendeeTicket at left join fetch at.attendee left join fetch at.ticketPrice left join fetch at.discountCode where at.id = :id")
-    Optional<AttendeeTicket> findById(@Param("id") int id);
+  @Query("from AttendeeTicket at left join fetch at.attendee left join fetch at.ticketPrice left join fetch at.discountCode where at.id = :id")
+  Optional<AttendeeTicket> findById(@Param("id") int id);
 
-    @Query("from AttendeeTicket at left join fetch at.attendee left join fetch at.ticketPrice left join fetch at.discountCode where at.ticketCode = :ticketCode")
-    Optional<AttendeeTicket> findByTicketCode(@Param("ticketCode") String ticketCode);
+  @Query("from AttendeeTicket at left join fetch at.attendee left join fetch at.ticketPrice left join fetch at.discountCode where at.ticketCode = :ticketCode")
+  Optional<AttendeeTicket> findByTicketCode(@Param("ticketCode") String ticketCode);
 }

@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public interface TicketPriceRepository extends JpaRepository<TicketPrice, Integer> {
 
-    @Query("from TicketPrice tp left join fetch tp.ticketType left join fetch tp.pricingCategory")
-    List<TicketPrice> findAll();
+  @Query("from TicketPrice tp left join fetch tp.ticketType left join fetch tp.pricingCategory")
+  List<TicketPrice> findAll();
 
-    Optional<TicketPrice> findByTicketTypeAndPricingCategory(TicketType ticketType, PricingCategory pricingCategory);
+  Optional<TicketPrice> findByTicketTypeAndPricingCategory(TicketType ticketType, PricingCategory pricingCategory);
 }
