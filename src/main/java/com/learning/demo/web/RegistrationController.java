@@ -24,7 +24,7 @@ public class RegistrationController {
 
   private final MessageChannel registrationRequestChannel;
 
-  public RegistrationController(@Qualifier("registrationRequest") MessageChannel registrationRequestChannel) {
+  public RegistrationController(@Qualifier("toRabbit") MessageChannel registrationRequestChannel) {
     this.registrationRequestChannel = registrationRequestChannel;
   }
 

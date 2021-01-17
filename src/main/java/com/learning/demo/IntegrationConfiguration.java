@@ -3,7 +3,7 @@ package com.learning.demo;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.integration.amqp.outbound.AmqpOutboundEndpoint;
+import org.springframework.integration.amqp.dsl.Amqp;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
@@ -14,30 +14,13 @@ import org.springframework.messaging.MessageChannel;
 public class IntegrationConfiguration {
 
   @Bean
-  public IntegrationFlow registrationRequestFlow() {
-    return IntegrationFlows
-        .from("registrationRequest")
-        .transform(Transformers.toJson())
-        .gateway("toRabbit")
-        .get();
-  }
-
-  @Bean
   public IntegrationFlow amqpOutbound(RabbitTemplate rabbitTemplate) {
-    AmqpOutboundEndpoint outbound = new AmqpOutboundEndpoint(rabbitTemplate);
-    outbound.setRequiresReply(false);
-    outbound.setExpectReply(false);
-    outbound.setRoutingKey("globomantics.registrationRequest");
-
     return IntegrationFlows
-        .from("toRabbit")
-        .handle(outbound)
+        .from(toRabbit())
+        .transform(Transformers.toJson())
+        .handle(Amqp.outboundAdapter(rabbitTemplate)
+            .routingKey("globomantics.registrationRequest"))
         .get();
-  }
-
-  @Bean
-  public MessageChannel registrationRequest() {
-    return new DirectChannel();
   }
 
   @Bean
